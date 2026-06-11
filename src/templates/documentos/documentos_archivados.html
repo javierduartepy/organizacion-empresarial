@@ -1,0 +1,56 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center p-3">
+        <h5 class="mb-0 fw-bold"><i class="bi bi-archive-fill me-2"></i>Historial de Activos Archivados</h5>
+        <a href="{% url 'documentos:lista' %}" class="btn btn-dark btn-sm fw-bold shadow-sm">
+            <i class="bi bi-arrow-left-short fs-5 align-middle"></i> Volver al Repositorio Activo
+        </a>
+    </div>
+    <div class="card-body bg-white p-4">
+        <p class="text-muted small mb-4"><i class="bi bi-exclamation-octagon-fill text-warning me-1"></i> Zona de control de retención de información. Ningún documento puede ser eliminado físicamente de la base de datos de ECOM para asegurar la trazabilidad.</p>
+        
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre del Archivo Guardado</th>
+                        <th>Área de Procedencia</th>
+                        <th>Tipo de Proceso</th>
+                        <th class="text-end">Recuperación Formal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for d in documentos_archivados %}
+                        <tr>
+                            <td class="font-monospace text-muted small">#ARC-{{ d.id }}</td>
+                            <td class="text-decoration-line-through text-muted fw-semibold">
+                                <i class="bi bi-file-lock2 me-2"></i>{{ d.nombre }}
+                            </td>
+                            <td><span class="badge bg-secondary-subtle text-secondary">🏢 {{ d.formulario.area_propietaria.nombre }}</span></td>
+                            <td><span class="badge bg-light text-muted border font-monospace">{{ d.formulario.get_tipo_documento_display }}</span></td>
+                            <td class="text-end">
+                                <form method="post" action="{% url 'documentos:recuperar' d.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-success fw-bold shadow-sm">
+                                        <i class="bi bi-arrow-counterclockwise me-1"></i> Restaurar Registro
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">
+                                <i class="bi bi-emoji-smile d-block fs-3 mb-2 text-success"></i>
+                                No se registran documentos inactivos o archivados en este clúster corporativo.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

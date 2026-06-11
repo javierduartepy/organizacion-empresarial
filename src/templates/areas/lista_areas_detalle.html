@@ -1,0 +1,110 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="row">
+    <!-- Columna Izquierda: Listado General de Áreas Oficiales -->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-dark text-white fw-bold">
+                <i class="bi bi-building me-2"></i>Áreas de la Organización
+            </div>
+            <div class="list-group list-group-flush bg-white">
+                {% for a in areas %}
+                    <a href="?area_id={{ a.id }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center p-3 {% if area_seleccionada.id == a.id %}active{% endif %}">
+                        <div>
+                            <h6 class="mb-0 fw-bold">{{ a.nombre }}</h6>
+                            <small class="{% if area_seleccionada.id == a.id %}text-white-50{% else %}text-muted{% endif %}">Nodo: {{ a.nodo_jerarquia.nombre }}</small>
+                        </div>
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                {% empty %}
+                    <div class="p-3 text-muted text-center">
+                        <i class="bi bi-info-circle d-block fs-4 mb-2"></i> No hay áreas oficiales dadas de alta.
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Columna Derecha: Panel Consolidado Dinámico (Auditoría del Sector) -->
+    <div class="col-md-8">
+        {% if area_seleccionada %}
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white p-3">
+                    <h4 class="mb-0 fw-bold"><i class="bi bi-shield-shaded me-2"></i>Panel Consolidado: {{ area_seleccionada.nombre }}</h4>
+                    <p class="mb-0 small text-white-50">Auditoría en tiempo real de recursos, flujos formales y canales transversales.</p>
+                </div>
+                <div class="card-body bg-white p-4">
+                    
+                    <!-- Sección 1: Personal Adscripto (Estructura Organizada) -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold text-secondary border-bottom pb-2"><i class="bi bi-people-fill me-2 text-primary"></i>Personal del Sector</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Nombre y Apellido</th>
+                                        <th>DNI</th>
+                                        <th>Usuario de Red</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for p in personal %}
+                                        <tr>
+                                            <td class="fw-semibold">{{ p.last_name }}, {{ p.first_name }}</td>
+                                            <td class="font-monospace text-muted">{{ p.dni }}</td>
+                                            <td><span class="badge bg-light text-dark border">{{ p.username }}</span></td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr><td colspan="3" class="text-muted text-center py-3">No hay empleados registrados en este grupo de trabajo.</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Sección 2: Formularios Propios (Autoridad Lineal) -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold text-secondary border-bottom pb-2"><i class="bi bi-file-earmark-ruled me-2 text-success"></i>Formularios Emitidos (Propios)</h5>
+                        <ul class="list-group gap-2">
+                            {% for f in formularios_propios %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-start border-success border-3 rounded shadow-sm bg-light">
+                                    <span class="fw-semibold">{{ f.nombre_formulario }}</span>
+                                    <span class="badge bg-dark font-monospace text-info">{{ f.get_tipo_documento_display }}</span>
+                                </li>
+                            {% empty %}
+                                <p class="text-muted small ps-2">Este sector no ha diseñado plantillas estandarizadas de salida todavía.</p>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <!-- Sección 3: Formularios Asociados (Comunicación Oblicua / Cruzada) -->
+                    <div>
+                        <h5 class="fw-bold text-secondary border-bottom pb-2"><i class="bi bi-arrow-left-right me-2 text-warning"></i>Formularios Vinculados (Canal Oblicuo)</h5>
+                        <ul class="list-group gap-2">
+                            {% for f in formularios_asociados %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-start border-warning border-3 rounded shadow-sm bg-light">
+                                    <div>
+                                        <span class="fw-semibold d-block">{{ f.nombre_formulario }}</span>
+                                        <small class="text-muted">Origen: {{ f.area_propietaria.nombre }}</small>
+                                    </div>
+                                    <span class="badge bg-dark font-monospace text-info">{{ f.get_tipo_documento_display }}</span>
+                                </li>
+                            {% empty %}
+                                <p class="text-muted small ps-2">No se han registrado comunicaciones oblicuas entrantes hacia este sector.</p>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        {% else %}
+            <div class="h-100 d-flex flex-column align-items-center justify-content-center border rounded bg-white p-5 text-center text-muted shadow-sm">
+                <i class="bi bi-building-up fs-1 mb-3 text-secondary"></i>
+                <h5>Auditoría de Sectores</h5>
+                <p class="small text-secondary max-w-sm">Seleccioná un área operativa del listado izquierdo para inspeccionar su dotación de personal formal, flujos de procesos e interconexiones horizontales.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

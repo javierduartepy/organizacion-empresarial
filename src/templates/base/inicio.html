@@ -1,0 +1,41 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="p-4 bg-white rounded shadow-sm border mb-4">
+    <h1 class="display-6 fw-bold text-slate-800">Bienvenido al Gestor Documental de ECOM</h1>
+    <p class="lead text-muted">Sistema integrado de flujos informáticos, control escalar e interconexión orgánica.</p>
+    <hr class="my-3">
+    <p class="text-secondary small"><i class="bi bi-info-circle-fill me-1"></i> Iniciaste sesión bajo un entorno auditado. Tu nivel de acceso determina la visibilidad automática de los repositorios centralizados.</p>
+</div>
+
+<!-- Tarjetas de Acceso Rápido y Métricas Teóricas -->
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card h-100 border-start border-warning border-4 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title fw-bold text-warning"><i class="bi bi-diagram-3 me-2"></i>Morfogénesis Orgánica</h5>
+                <p class="card-text text-muted small">Visualizá y modificá dinámicamente el árbol jerárquico de la empresa. Alta, baja estructural y control de la cumbre estratégica.</p>
+                <a href="{% url 'jerarquia:arbol' %}" class="btn btn-sm btn-outline-warning">Ir al Organigrama</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 border-start border-info border-4 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title fw-bold text-info"><i class="bi bi-file-earmark-text me-2"></i>Estandarización</h5>
+                <p class="card-text text-muted small">Carga de documentos parametrizados mediante plantillas preconfiguradas. Gestión por procesos y control preventivo de errores.</p>
+                <a href="{% url 'formularios:lista' %}" class="btn btn-sm btn-outline-info">Ver Plantillas</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 border-start border-danger border-4 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title fw-bold text-danger"><i class="bi bi-shield-shaded me-2"></i>Canales de Comunicación</h5>
+                <p class="card-text text-muted small">Accedé al listado centralizado de archivos. Filtrado por adscripción formal, control concurrente y pasarelas de comunicación oblicua.</p>
+                <a href="{% url 'documentos:lista' %}" class="btn btn-sm btn-outline-danger">Abrir Repositorio</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

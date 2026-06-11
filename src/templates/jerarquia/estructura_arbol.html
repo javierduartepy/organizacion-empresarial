@@ -1,0 +1,75 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="row">
+    <!-- Columna Izquierda: El Árbol Jerárquico Visual (Organigrama) -->
+    <div class="col-md-7">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-dark text-white d-flex align-items-center gap-2">
+                <i class="bi bi-diagram-3-fill text-warning"></i>
+                <h5 class="mb-0 fw-bold">Estructura Orgánica de ECOM</h5>
+            </div>
+            <div class="card-body bg-white p-4">
+                <p class="text-muted small mb-4"><i class="bi bi-info-circle me-1"></i> Mapa dinámico de dependencias funcionales. Seleccioná un nodo para auditar su rama.</p>
+                
+                {% if nodo_raiz %}
+                    <ul class="list-unstyled ps-2">
+                        <!-- Iniciamos la macro-estructura recursiva -->
+                        <li class="mb-2">
+                            <span class="badge bg-primary p-2 fs-6 shadow-sm">
+                                👑 {{ nodo_raiz.nombre }} (Cumbre Estratégica)
+                            </span>
+                            
+                            <!-- Sub-ramas (Hijos) -->
+                            {% if nodo_raiz.hijos.all %}
+                                <ul class="list-unstyled ms-4 mt-2 border-start border-secondary ps-3">
+                                    {% for hijo in nodo_raiz.hijos.all %}
+                                        {% include 'jerarquia/sub_nodo.html' with nodo=hijo %}
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </li>
+                    </ul>
+                {% else %}
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> No se detectó el nodo raíz. Iniciá sesión en el panel de administración para generar la Alta Gerencia.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Columna Derecha: Formulario dinámico de Reorganización Structural -->
+    <div class="col-md-5">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-secondary text-white fw-bold">
+                <i class="bi bi-plus-circle-fill me-2"></i>Crear Nueva Área / Subárea
+            </div>
+            <div class="card-body bg-white p-4">
+                <form method="post" action="{% url 'jerarquia:crear_nodo' %}">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="id_nombre" class="form-label fw-bold text-secondary">Nombre del Nodo</label>
+                        <input type="text" name="nombre" id="id_nombre" class="form-control" placeholder="Ej: Gerencia de Finanzas" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_padre" class="form-label fw-bold text-secondary">Depende Jerárquicamente de (Padre)</label>
+                        <select name="padre" id="id_padre" class="form-select" required>
+                            <option value="" selected disabled>-- Seleccionar Nodo Padre --</option>
+                            {% for n in nodos %}
+                                <option value="{{ n.id }}">{{ n.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 fw-bold shadow-sm">
+                        <i class="bi bi-save me-2"></i>Guardar e Integrar al Sistema
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

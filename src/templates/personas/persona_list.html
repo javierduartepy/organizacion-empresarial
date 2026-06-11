@@ -1,0 +1,57 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center p-3">
+        <h5 class="mb-0 fw-bold"><i class="bi bi-people-fill me-2 text-primary"></i>Nómina del Talento Humano</h5>
+        <a href="{% url 'personas:alta' %}" class="btn btn-primary btn-sm fw-bold shadow-sm">
+            <i class="bi bi-person-plus-fill me-1"></i> Registrar Empleado
+        </a>
+    </div>
+    <div class="card-body bg-white p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>DNI</th>
+                        <th>Apellido y Nombre</th>
+                        <th>Usuario de Sistema</th>
+                        <th>Área Asignada</th>
+                        <th>Grupo de Permisos (Django)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for e in empleados %}
+                        <tr>
+                            <td class="font-monospace fw-bold text-secondary">{{ e.dni }}</td>
+                            <td class="fw-semibold">{{ e.last_name }}, {{ e.first_name }}</td>
+                            <td><span class="badge bg-light text-dark border">{{ e.username }}</span></td>
+                            <td>
+                                {% if e.area %}
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">🏢 {{ e.area.nombre }}</span>
+                                {% else %}
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1">⚠️ Sin Área</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% for g in e.groups.all %}
+                                    <span class="badge bg-dark font-monospace text-info small">{{ g.name }}</span>
+                                {% empty %}
+                                    <span class="text-muted small">-</span>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">
+                                <i class="bi bi-person-exclamation d-block fs-2 mb-2 text-secondary"></i>
+                                No se encontraron empleados registrados en la organización formal de ECOM.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

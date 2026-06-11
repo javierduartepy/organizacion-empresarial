@@ -1,0 +1,51 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center p-3">
+        <h5 class="mb-0 fw-bold"><i class="bi bi-file-earmark-ruled-fill me-2 text-info"></i>Estandarización: Plantillas de Salida</h5>
+        <a href="{% url 'formularios:crear' %}" class="btn btn-info btn-sm fw-bold shadow-sm text-dark">
+            <i class="bi bi-plus-square-fill me-1"></i> Diseñar Formulario
+        </a>
+    </div>
+    <div class="card-body bg-white p-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre del Formulario / Perfilador</th>
+                        <th>Tipo de Documento</th>
+                        <th>Área Propietaria (Emisor)</th>
+                        <th>Destinatarios Vinculados (Canal Oblicuo)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for f in formularios %}
+                        <tr>
+                            <td class="text-muted font-monospace small">#{{ f.id }}</td>
+                            <td class="fw-bold text-dark">{{ f.nombre_formulario }}</td>
+                            <td><span class="badge bg-light text-dark border font-monospace">{{ f.get_tipo_documento_display }}</span></td>
+                            <td><span class="badge bg-primary-subtle text-primary px-2 py-1">🏢 {{ f.area_propietaria.nombre }}</span></td>
+                            <td>
+                                {% for dest in f.areas_destinatarias.all %}
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle font-monospace small me-1">🎯 {{ dest.nombre }}</span>
+                                {% empty %}
+                                    <span class="text-muted small italic"><i class="bi bi-lock-fill me-1"></i>Reservado (Solo Propietario y CEO)</span>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">
+                                <i class="bi bi-file-earmark-x d-block fs-2 mb-2 text-secondary"></i>
+                                No se han diseñado formularios estandarizados en la organización.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

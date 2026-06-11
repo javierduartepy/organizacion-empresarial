@@ -1,0 +1,24 @@
+# Entornos virtuales (No se suben a GitHub)
+venv/
+ENV/
+env/
+
+# Archivos de configuración local y credenciales
+.env
+
+# Archivos temporales de Python (Caché)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Base de datos local SQLite (Por si quedó algún rastro)
+*.sqlite3
+
+# Archivos cargados por los usuarios (Los PDFs reales)
+src/media/
+src/documentos_pdf/
+
+# Configuraciones de editores de código
+.vscode/
+.idea/

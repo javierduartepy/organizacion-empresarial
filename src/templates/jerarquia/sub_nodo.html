@@ -1,0 +1,15 @@
+<li class="my-2">
+    <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-folder-fill text-warning fs-5"></i>
+        <span class="text-dark fw-semibold" style="font-size: 0.95rem;">{{ nodo.nombre }}</span>
+    </div>
+    
+    <!-- Si este nodo hijo tiene a su vez sub-nodos hijos, se vuelve a llamar a sí mismo -->
+    {% if nodo.hijos.all %}
+        <ul class="list-unstyled ms-3 mt-1 border-start border-light-subtle ps-3">
+            {% for sub_hijo in nodo.hijos.all %}
+                {% include 'jerarquia/sub_nodo.html' with nodo=sub_hijo %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+</li>

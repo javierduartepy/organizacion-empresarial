@@ -1,0 +1,72 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center p-3">
+        <h5 class="mb-0 fw-bold"><i class="bi bi-file-pdf-fill me-2 text-danger"></i>Repositorio Centralizado de Documentación</h5>
+        <a href="{% url 'documentos:archivados' %}" class="btn btn-outline-warning btn-sm fw-bold shadow-sm">
+            <i class="bi bi-archive-fill me-1"></i> Ver Papelera de Archivo
+        </a>
+    </div>
+    <div class="card-body bg-white p-4">
+        
+        {% if request.user.is_superuser %}
+            <div class="alert alert-info border-0 shadow-sm d-flex align-items-center gap-2 mb-4">
+                <i class="bi bi-shield-fill-check text-primary fs-4"></i>
+                <div>
+                    <strong>Credencial: Alta Gerencia (CEO)</strong> — Disponés de acceso holístico absoluto sobre todos los flujos documentales del sistema integrado.
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Código</th>
+                        <th>Nombre del Documento</th>
+                        <th>Plantilla / Formulario Origen</th>
+                        <th>Área Propietaria</th>
+                        <th>Tipo Legal</th>
+                        <th class="text-end">Acciones Formales</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for d in documentos %}
+                        <tr>
+                            <td class="font-monospace text-muted small">#PDF-{{ d.id }}</td>
+                            <td class="fw-bold text-slate-700">
+                                <i class="bi bi-file-earmark-pdf text-danger me-2"></i>{{ d.nombre }}
+                            </td>
+                            <td><span class="badge bg-light text-dark border">{{ d.formulario.nombre_formulario }}</span></td>
+                            <td><span class="badge bg-primary-subtle text-primary">🏢 {{ d.formulario.area_propietaria.nombre }}</span></td>
+                            <td><span class="badge bg-dark font-monospace text-info">{{ d.formulario.get_tipo_documento_display }}</span></td>
+                            <td class="text-end">
+                                <div class="d-inline-flex gap-2">
+                                    <a href="{{ d.archivo_pdf.url }}" target="_blank" class="btn btn-sm btn-outline-primary fw-bold">
+                                        <i class="bi bi-eye-fill"></i> Leer
+                                    </a>
+                                    <!-- Formulario para simular el borrado lógico seguro -->
+                                    <form method="post" action="{% url 'documentos:archivar' d.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-danger fw-bold" onclick="return confirm('¿Está seguro de archivar este activo digital? Se ocultará de la nómina regular.');">
+                                            <i class="bi bi-box-arrow-in-down"></i> Archivar
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="bi bi-folder-x d-block fs-1 mb-2 text-secondary"></i>
+                                No tenés flujos de información entrantes ni salientes registrados para tu nivel jerárquico.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

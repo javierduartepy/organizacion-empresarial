@@ -1,0 +1,63 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-secondary text-white fw-bold p-3">
+                <i class="bi bi-person-plus-fill me-2"></i>Formulario de Alta de Usuario
+            </div>
+            <div class="card-body bg-white p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_first_name" class="form-label fw-bold text-secondary">Nombre</label>
+                            <input type="text" name="first_name" id="id_first_name" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="id_last_name" class="form-label fw-bold text-secondary">Apellido</label>
+                            <input type="text" name="last_name" id="id_last_name" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_dni" class="form-label fw-bold text-secondary">DNI (Documento Nacional de Identidad)</label>
+                        <input type="text" name="dni" id="id_dni" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_area" class="form-label fw-bold text-secondary">Asignar Área (Estructura de Nodos)</label>
+                        <select name="area" id="id_area" class="form-select" required>
+                            <option value="" selected disabled>-- Seleccionar Área Real --</option>
+                            <!-- Django itera de forma automática sobre el queryset del campo -->
+                            {% for choice in form.area.field.queryset %}
+                                <option value="{{ choice.id }}">{{ choice.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <hr class="my-4 text-muted">
+                    <p class="text-uppercase text-secondary fw-bold mb-3" style="font-size: 0.75rem;">Credenciales de Acceso</p>
+
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label fw-bold text-secondary">Usuario de Red</label>
+                        <input type="text" name="username" id="id_username" class="form-control" placeholder="Ej: jduarte" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="id_password" class="form-label fw-bold text-secondary">Contraseña Temporal</label>
+                        <input type="password" name="password" id="id_password" class="form-control" required>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'personas:lista' %}" class="btn btn-outline-secondary w-50 fw-bold">Cancelar</a>
+                        <button type="submit" class="btn btn-success w-50 fw-bold shadow-sm">Guardar Personal</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

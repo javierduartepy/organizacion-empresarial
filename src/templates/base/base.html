@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECOM - Gestor Documental</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://jsdelivr.net" rel="stylesheet">
+    <!-- Iconos de Bootstrap -->
+    <link href="https://jsdelivr.net" rel="stylesheet">
+    <style>
+        .sidebar { min-height: 100vh; background-color: #1e293b; }
+        .sidebar .nav-link { color: #cbd5e1; transition: 0.2s; }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { background-color: #334155; color: #fff; border-radius: 6px; }
+        .navbar-custom { background-color: #0f172a; }
+    </style>
+</head>
+<body class="bg-light">
+
+    <!-- Navbar Superior (Control Global) -->
+    <nav class="navbar navbar-dark navbar-custom sticky-top shadow-sm px-4">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'inicio' %}">
+            <i class="bi bi-layer-forward text-info"></i>
+            <span class="fw-bold tracking-tight">ECOM S.A. <span class="text-info font-monospace text-xs">v1.8</span></span>
+        </a>
+        <div class="d-flex align-items-center gap-3">
+            <span class="badge bg-dark text-info p-2 border border-secondary font-monospace">
+                <i class="bi bi-shield-lock-fill me-1"></i>{{ request.user.username|default:"Invitado" }}
+            </span>
+            {% if request.user.is_authenticated %}
+                <a href="/admin/logout/" class="btn btn-outline-danger btn-sm"><i class="bi bi-box-arrow-right"></i></a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar Lateral Izquierdo (Módulos de la Organización) -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-3 shadow">
+                <div class="position-sticky">
+                    <p class="text-uppercase text-secondary fw-bold px-3 mb-2" style="font-size: 0.75rem;">Estructura</p>
+                    <ul class="nav flex-column gap-1 mb-4">
+                        <li class="nav-item">
+                            <a class="nav-link px-3 py-2 d-flex align-items-center gap-2" href="{% url 'jerarquia:arbol' %}">
+                                <i class="bi bi-diagram-3-fill text-warning"></i> Jerarquías
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-3 py-2 d-flex align-items-center gap-2" href="{% url 'areas:lista' %}">
+                                <i class="bi bi-building-fill text-success"></i> Áreas
+                            </a>
+                        </li>
+                    </ul>
+
+                    <p class="text-uppercase text-secondary fw-bold px-3 mb-2" style="font-size: 0.75rem;">Operaciones</p>
+                    <ul class="nav flex-column gap-1 mb-4">
+                        <li class="nav-item">
+                            <a class="nav-link px-3 py-2 d-flex align-items-center gap-2" href="{% url 'personas:lista' %}">
+                                <i class="bi bi-people-fill text-primary"></i> Personas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-3 py-2 d-flex align-items-center gap-2" href="{% url 'formularios:lista' %}">
+                                <i class="bi bi-file-earmark-ruled-fill text-info"></i> Formularios
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-3 py-2 d-flex align-items-center gap-2" href="{% url 'documentos:lista' %}">
+                                <i class="bi bi-file-pdf-fill text-danger"></i> Documentos
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Espacio Principal de Trabajo Dinámico -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show shadow-sm" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                {% block content %} {% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundled -->
+    <script src="https://jsdelivr.net"></script>
+</body>
+</html>
