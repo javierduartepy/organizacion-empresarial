@@ -1,24 +1,31 @@
-# Entornos virtuales (No se suben a GitHub)
-venv/
-ENV/
-env/
+# 📦 Entornos virtuales (Bloqueo absoluto para Windows/Git)
+venv
+venv/*
+ENV
+env
+**/venv/
 
-# Archivos de configuración local y credenciales
+
+# 🔑 Archivos de configuración local y credenciales
 .env
+.env.txt
 
-# Archivos temporales de Python (Caché)
-__pycache__/
+# 🐍 Archivos temporales de Python (Caché)
+__pycache__
+__pycache__/*
 *.pyc
 *.pyo
 *.pyd
 
-# Base de datos local SQLite (Por si quedó algún rastro)
+# 🗄️ Base de datos local SQLite (Por si quedó algún rastro)
 *.sqlite3
 
-# Archivos cargados por los usuarios (Los PDFs reales)
+# 📄 Archivos cargados por los usuarios (Los PDFs reales)
 src/media/
 src/documentos_pdf/
+media/
+documentos_pdf/
 
-# Configuraciones de editores de código
+# 💻 Configuraciones de editores de código
 .vscode/
 .idea/
