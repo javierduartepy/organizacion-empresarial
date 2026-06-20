@@ -1,36 +1,34 @@
 from django.shortcuts import render, redirect
-from django.views.generic import ListView, CreateView
-from django.urls import reverse_lazy
+from django.views.generic import ListView
 from django.contrib import messages
-from django.core.exceptions import ValidationError
 from .models import NodoJerarquia
 
-# 🌳 1. Vista para Listar y Renderizar el Árbol Estructural
 class EstructuraArbolView(ListView):
     model = NodoJerarquia
     template_name = 'jerarquia/estructura_arbol.html'
     context_object_name = 'nodos'
 
+    def get_queryset(self):
+        # Optimización: trae de antemano el padre para evitar consultas secuenciales
+        return NodoJerarquia.objects.select_related('padre').all()
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Traemos solo el nodo raíz (CEO) para arrancar la renderización recursiva en el HTML
-        context['nodo_raiz'] = NodoJerarquia.objects.filter(padre__isnull=True).first()
+        # Trae el nodo raíz y sus hijos a la caché
+        context['nodo_raiz'] = NodoJerarquia.objects.filter(padre__isnull=True).prefetch_related('hijos').first()
         return context
 
-# 📁 2. Vista para Crear un Nodo Hijo en la Jerarquía (Morfogénesis)
-class NodoHijoCreateView(CreateView):
-    model = NodoJerarquia
-    fields = ['nombre', 'padre']
-    template_name = 'jerarquia/estructura_arbol.html' # Reutiliza la misma pantalla
-    success_url = reverse_lazy('jerarquia:arbol')
-
-    def form_valid(self, form):
+    # SOLUCIÓN AL ERROR 405: Agregamos el método POST para procesar el formulario de creación
+    def post(self, request, *args, **kwargs):
+        nombre = request.POST.get('nombre')
+        padre_id = request.POST.get('padre')
+        
         try:
-            messages.success(self.request, f"¡Nodo '{form.cleaned_data['nombre']}' creado con éxito en la estructura!")
-            return super().form_valid(form)
-        except ValidationError as e:
-            form.add_error(None, e)
-            return self.form_invalid(form)
-from django.shortcuts import render
-
-# Create your views here.
+            padre_nodo = NodoJerarquia.objects.get(id=padre_id)
+            nuevo_nodo = NodoJerarquia(nombre=nombre, padre=padre_nodo)
+            nuevo_nodo.save()
+            messages.success(request, f"¡Área '{nombre}' integrada con éxito como hijo de '{padre_nodo.nombre}'!")
+        except Exception as e:
+            messages.error(request, f"Error al integrar el nodo: {str(e)}")
+            
+        return redirect('jerarquia:arbol')

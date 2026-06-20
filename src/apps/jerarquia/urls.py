@@ -3,7 +3,7 @@ from . import views
 
 app_name = 'jerarquia'
 urlpatterns = [
+    # Esta única URL maneja el GET (ver árbol) y el POST (crear nodo hijo)
     path('arbol/', views.EstructuraArbolView.as_view(), name='arbol'),
-    path('arbol/crear/', views.NodoHijoCreateView.as_view(), name='crear_nodo'),
-    
 ]
+

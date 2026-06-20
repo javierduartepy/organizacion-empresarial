@@ -8,25 +8,32 @@ class ListaAreasDetalleView(ListView):
     template_name = 'areas/lista_areas_detalle.html'
     context_object_name = 'areas'
 
+    def get_queryset(self):
+        # ⚡ OPTIMIZACIÓN 1: select_related hace un JOIN en SQL para traer el nodo jerárquico de un solo tiro
+        return AreaEmpresa.objects.select_related('nodo_jerarquia').all()
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
-        # Detectamos si el usuario seleccionó un área de la lista en la pantalla
         area_id = self.request.GET.get('area_id')
         
         if area_id:
             try:
-                area_seleccionada = AreaEmpresa.objects.get(id=area_id)
+                # Traemos el área y unimos su nodo jerárquico
+                area_seleccionada = AreaEmpresa.objects.select_related('nodo_jerarquia').get(id=area_id)
                 context['area_seleccionada'] = area_seleccionada
                 
-                # 1. Traemos el talento humano adscripto a este sector (Unidad 3)
                 context['personal'] = PersonaUsuario.objects.filter(area=area_seleccionada)
                 
-                # 2. Formularios propios creados por el área (Autoridad de Línea)
-                context['formularios_propios'] = FormularioTemplate.objects.filter(area_propietaria=area_seleccionada)
+                # ⚡ OPTIMIZACIÓN 2: Al listar formularios propios, precargamos su área propietaria
+                context['formularios_propios'] = FormularioTemplate.objects.filter(
+                    area_propietaria=area_seleccionada
+                ).select_related('area_propietaria')
                 
-                # 3. Formularios compartidos con esta área (Comunicación Oblicua / Cruzada)
-                context['formularios_asociados'] = FormularioTemplate.objects.filter(areas_destinatarias=area_seleccionada)
+                # ⚡ OPTIMIZACIÓN 3: prefetch_related optimiza la pasarela ManyToMany de comunicación oblicua
+                context['formularios_asociados'] = FormularioTemplate.objects.filter(
+                    areas_destinatarias=area_seleccionada
+                ).select_related('area_propietaria').prefetch_related('areas_destinatarias')
+                
             except AreaEmpresa.DoesNotExist:
                 pass
                 

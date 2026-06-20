@@ -1,75 +1,64 @@
 {% extends 'base/base.html' %}
 
 {% block content %}
-<div class="row">
-    <!-- Columna Izquierda: El Árbol Jerárquico Visual (Organigrama) -->
-    <div class="col-md-7">
-        <div class="card shadow-sm border-0 mb-4">
-            <div class="card-header bg-dark text-white d-flex align-items-center gap-2">
-                <i class="bi bi-diagram-3-fill text-warning"></i>
-                <h5 class="mb-0 fw-bold">Estructura Orgánica de ECOM</h5>
-            </div>
-            <div class="card-body bg-white p-4">
-                <p class="text-muted small mb-4"><i class="bi bi-info-circle me-1"></i> Mapa dinámico de dependencias funcionales. Seleccioná un nodo para auditar su rama.</p>
-                
-                {% if nodo_raiz %}
-                    <ul class="list-unstyled ps-2">
-                        <!-- Iniciamos la macro-estructura recursiva -->
-                        <li class="mb-2">
-                            <span class="badge bg-primary p-2 fs-6 shadow-sm">
-                                👑 {{ nodo_raiz.nombre }} (Cumbre Estratégica)
-                            </span>
-                            
-                            <!-- Sub-ramas (Hijos) -->
-                            {% if nodo_raiz.hijos.all %}
-                                <ul class="list-unstyled ms-4 mt-2 border-start border-secondary ps-3">
-                                    {% for hijo in nodo_raiz.hijos.all %}
-                                        {% include 'jerarquia/sub_nodo.html' with nodo=hijo %}
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </li>
-                    </ul>
-                {% else %}
-                    <div class="alert alert-warning">
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i> No se detectó el nodo raíz. Iniciá sesión en el panel de administración para generar la Alta Gerencia.
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-
-    <!-- Columna Derecha: Formulario dinámico de Reorganización Structural -->
-    <div class="col-md-5">
-        <div class="card shadow-sm border-0">
-            <div class="card-header bg-secondary text-white fw-bold">
-                <i class="bi bi-plus-circle-fill me-2"></i>Crear Nueva Área / Subárea
-            </div>
-            <div class="card-body bg-white p-4">
-                <form method="post" action="{% url 'jerarquia:crear_nodo' %}">
-                    {% csrf_token %}
+<div style="display: flex; gap: 20px;">
+    
+    <!-- Columna Izquierda: El Árbol Jerárquico Visual -->
+    <div style="flex: 7; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">🌳 Estructura Orgánica</h3>
+        <p style="color: #64748b; font-size: 0.9rem;">Mapa de dependencias funcionales de la empresa.</p>
+        
+        {% if nodo_raiz %}
+            <ul style="list-style-type: none; padding-left: 10px;">
+                <li>
+                    <span style="background: #2563eb; color: white; padding: 6px 12px; border-radius: 4px; font-weight: bold; display: inline-block;">
+                        👑 {{ nodo_raiz.nombre }} (CEO / Raíz)
+                    </span>
                     
-                    <div class="mb-3">
-                        <label for="id_nombre" class="form-label fw-bold text-secondary">Nombre del Nodo</label>
-                        <input type="text" name="nombre" id="id_nombre" class="form-control" placeholder="Ej: Gerencia de Finanzas" required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="id_padre" class="form-label fw-bold text-secondary">Depende Jerárquicamente de (Padre)</label>
-                        <select name="padre" id="id_padre" class="form-select" required>
-                            <option value="" selected disabled>-- Seleccionar Nodo Padre --</option>
-                            {% for n in nodos %}
-                                <option value="{{ n.id }}">{{ n.nombre }}</option>
+                    {% if nodo_raiz.hijos.all %}
+                        <ul style="list-style-type: none; padding-left: 20px; margin-top: 10px; border-left: 2px dashed #cbd5e1;">
+                            {% for hijo in nodo_raiz.hijos.all %}
+                                {% include 'jerarquia/sub_nodo.html' with nodo=hijo %}
                             {% endfor %}
-                        </select>
-                    </div>
-
-                    <button type="submit" class="btn btn-success w-100 fw-bold shadow-sm">
-                        <i class="bi bi-save me-2"></i>Guardar e Integrar al Sistema
-                    </button>
-                </form>
+                        </ul>
+                    {% endif %}
+                </li>
+            </ul>
+        {% else %}
+            <div style="padding: 15px; background: #fef2f2; color: #b91c1c; border-radius: 6px;">
+                ⚠️ No se detectó el nodo raíz. Crealo primero desde el panel de administración (/admin/).
             </div>
-        </div>
+        {% endif %}
     </div>
+
+    <!-- Columna Derecha: Formulario de Creación -->
+    <div style="flex: 5; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); height: fit-content;">
+        <h4 style="margin-top: 0; color: #0f172a; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">📁 Crear Subárea</h4>
+        
+        <!-- LA SOLUCIÓN: El action apunta a 'jerarquia:arbol' por POST -->
+        <form method="post" action="{% url 'jerarquia:arbol' %}">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #475569; font-size: 0.9rem;">Nombre del Nuevo Sector</label>
+                <input type="text" name="nombre" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;" placeholder="Ej: Dirección de RRHH" required>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #475569; font-size: 0.9rem;">Depende Jerárquicamente de</label>
+                <select name="padre" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px;" required>
+                    <option value="" selected disabled>-- Seleccionar Padre --</option>
+                    {% for n in nodos %}
+                        <option value="{{ n.id }}">{{ n.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" style="width: 100%; background: #10b981; color: white; padding: 10px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">
+                Integrar al Sistema
+            </button>
+        </form>
+    </div>
+
 </div>
 {% endblock %}
